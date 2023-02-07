@@ -1,6 +1,7 @@
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 # Ruta: /hola
@@ -40,3 +41,28 @@ def postFormularioEndpoint(request):
         """)
 
     return HttpResponse("Llego")
+
+def getQueryParameters(request):
+    if request.method == "GET":
+        usuario = request.GET.get("usu")
+        password = request.GET.get("pass")
+        return HttpResponse(f"""
+            <p>Usuario: {usuario}</p>
+            <p>Password: {password}</p>
+        """)
+
+def getPathParameters(request, username, password):
+    if request.method == "GET":
+        return HttpResponse(f"""
+            <p>Usuario: {username}</p>
+            <p>Password: {password}</p>
+        """)
+
+@csrf_exempt
+def getRawData(request):
+    if request.method == "POST":
+        strBody = request.body
+        dictUsuario = json.loads(strBody) # Convierte string (json)= -> dict python
+        jsonUsuario = json.dumps(dictUsuario) # Convierte dict python -> string (json)
+
+        return HttpResponse(jsonUsuario)
